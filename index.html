@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM BREACH // YOU HAVE BEEN HACKED</title>
+    <style>
+        /* Reset i podstawowe ustawienia */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-red: #ff003c;
+            --neon-green: #00ff41;
+            --dark-bg: #050505;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--neon-green);
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+        }
+
+        /* Tło Matrix Canvas */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.35;
+        }
+
+        /* Efekt linii skanowania CRT oraz winiety */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.4) 50%
+            ), radial-gradient(
+                circle, 
+                rgba(0,0,0,0) 60%, 
+                rgba(0,0,0,0.85) 100%
+            );
+            background-size: 100% 4px, 100% 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Kontener główny */
+        .terminal-container {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Animacja śmiejącej się czaszki (głowa i żuchwa) */
+        .skull-wrapper {
+            width: 240px;
+            height: 280px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 60, 0.7));
+            animation: skull-shake 0.35s infinite alternate ease-in-out;
+        }
+
+        @media (min-width: 768px) {
+            .skull-wrapper {
+                width: 300px;
+                height: 340px;
+            }
+        }
+
+        /* Górna część czaszki - delikatny ruch śmiechu */
+        #skull-cranium {
+            transform-origin: center 60%;
+            animation: cranium-laugh 0.32s infinite alternate ease-in-out;
+        }
+
+        /* Dolna szczęka (żuchwa) - dynamiczny ruch góra-dół */
+        #skull-jaw {
+            transform-origin: center 75%;
+            animation: jaw-laugh 0.16s infinite alternate ease-in-out;
+        }
+
+        /* Pulsujące oczy */
+        .skull-eye {
+            fill: var(--neon-red);
+            animation: eye-flicker 0.25s infinite alternate;
+        }
+
+        @keyframes skull-shake {
+            0% { transform: translate(-2px, 1px) rotate(-1deg); }
+            50% { transform: translate(2px, -2px) rotate(1deg); }
+            100% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+        }
+
+        @keyframes cranium-laugh {
+            0% { transform: translateY(0px) scaleY(1); }
+            100% { transform: translateY(-6px) scaleY(1.02); }
+        }
+
+        @keyframes jaw-laugh {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(18px) rotate(2deg); }
+        }
+
+        @keyframes eye-flicker {
+            0% { opacity: 1; transform: scale(1); }
+            80% { opacity: 0.85; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(0.95); }
+        }
+
+        /* Glitchujący napis główny */
+        .glitch-title {
+            font-size: clamp(2rem, 6vw, 4.5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--neon-red);
+            position: relative;
+            text-shadow: 0 0 10px var(--neon-red), 0 0 25px var(--neon-red);
+            animation: text-pulse 1.5s infinite alternate;
+            margin-bottom: 15px;
+        }
+
+        .glitch-title::before,
+        .glitch-title::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        .glitch-title::before {
+            left: 3px;
+            text-shadow: -2px 0 var(--neon-green);
+            clip: rect(24px, 9999px, 90px, 0);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .glitch-title::after {
+            left: -3px;
+            text-shadow: -2px 0 #00e5ff;
+            clip: rect(85px, 9999px, 140px, 0);
+            animation: glitch-anim-2 1.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes text-pulse {
+            0% { transform: scale(1); opacity: 0.95; }
+            100% { transform: scale(1.03); opacity: 1; }
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(12px, 9999px, 54px, 0); transform: skew(0.5deg); }
+            20% { clip: rect(78px, 9999px, 12px, 0); transform: skew(-0.8deg); }
+            40% { clip: rect(34px, 9999px, 98px, 0); transform: skew(0.3deg); }
+            60% { clip: rect(65px, 9999px, 23px, 0); transform: skew(-0.4deg); }
+            80% { clip: rect(10px, 9999px, 82px, 0); transform: skew(0.9deg); }
+            100% { clip: rect(49px, 9999px, 61px, 0); transform: skew(-0.2deg); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 99px, 0); transform: skew(-0.5deg); }
+            25% { clip: rect(15px, 9999px, 45px, 0); transform: skew(0.7deg); }
+            50% { clip: rect(88px, 9999px, 19px, 0); transform: skew(-0.3deg); }
+            75% { clip: rect(29px, 9999px, 73px, 0); transform: skew(0.6deg); }
+            100% { clip: rect(51px, 9999px, 38px, 0); transform: skew(-0.8deg); }
+        }
+
+        /* Podpis terminala / status */
+        .status-box {
+            border: 1px solid var(--neon-green);
+            background: rgba(0, 20, 0, 0.75);
+            padding: 12px 24px;
+            border-radius: 6px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.25);
+            font-size: clamp(0.85rem, 2vw, 1.1rem);
+            color: var(--neon-green);
+            letter-spacing: 1.5px;
+            max-width: 90%;
+        }
+
+        .blink-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.1em;
+            background-color: var(--neon-green);
+            vertical-align: middle;
+            margin-left: 5px;
+            animation: cursor-blink 0.8s infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Link do kierunku studiów (ukryty na starcie) */
+        .terminal-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: var(--neon-green);
+            text-decoration: none;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-bottom: 1px dashed var(--neon-green);
+            padding-bottom: 2px;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+
+            /* stan ukryty */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition:
+                opacity 1.2s ease,
+                transform 1.2s ease,
+                visibility 1.2s,
+                color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .terminal-link.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            animation: link-flicker 0.6s steps(1) 1;
+        }
+
+        .terminal-link:hover {
+            color: var(--dark-bg);
+            background: var(--neon-green);
+            border-bottom-color: transparent;
+            box-shadow: 0 0 14px var(--neon-green);
+            text-shadow: none;
+        }
+
+        /* krótkie "mignięcie" przy pojawieniu się */
+        @keyframes link-flicker {
+            0%   { opacity: 0; }
+            20%  { opacity: 1; }
+            35%  { opacity: 0.2; }
+            55%  { opacity: 1; }
+            70%  { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Przycisk opcjonalnego dźwięku syntezatora (zgodny z polityką przeglądarek) */
+        .sound-btn {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .sound-btn:hover {
+            background: var(--neon-red);
+            color: #000;
+            box-shadow: 0 0 12px var(--neon-red);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tło z deszczem znaków Matrix -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Nakładka linii CRT -->
+    <div class="crt-overlay"></div>
+
+    <!-- Główna zawartość -->
+    <main class="terminal-container">
+        
+        <!-- Animowana czaszka wektorowa SVG -->
+        <div class="skull-wrapper" aria-label="Laughing Hacker Skull">
+            <svg viewBox="0 0 200 230" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <!-- Górna część czaszki -->
+                <g id="skull-cranium">
+                    <!-- Zarys czaszki -->
+                    <path d="M 45 95 C 35 45, 65 15, 100 15 C 135 15, 165 45, 155 95 C 152 110, 162 120, 155 135 L 138 142 L 135 158 L 65 158 L 62 142 L 45 135 C 38 120, 48 110, 45 95 Z" 
+                          fill="#121212" stroke="#ff003c" stroke-width="3.5" stroke-linejoin="round"/>
+                    
+                    <!-- Pęknięcie na czole (detal hakerski) -->
+                    <polyline points="115,20 110,38 118,48 112,60" fill="none" stroke="#ff003c" stroke-width="2" opacity="0.8"/>
+
+                    <!-- Oczodoły -->
+                    <path class="skull-eye" d="M 58 88 C 58 72, 86 72, 88 90 C 89 104, 62 106, 58 88 Z"/>
+                    <path class="skull-eye" d="M 142 88 C 142 72, 114 72, 112 90 C 111 104, 138 106, 142 88 Z"/>
+
+                    <!-- Źrenice / cybernetyczne punkty w oczach -->
+                    <circle cx="74" cy="88" r="3" fill="#ffffff"/>
+                    <circle cx="126" cy="88" r="3" fill="#ffffff"/>
+
+                    <!-- Otwór nosowy -->
+                    <path d="M 100 105 L 91 126 L 100 122 L 109 126 Z" fill="#ff003c"/>
+
+                    <!-- Górne zęby -->
+                    <rect x="72" y="148" width="9" height="14" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="84" y="148" width="9" height="15" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="96" y="148" width="9" height="15" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="108" y="148" width="9" height="15" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="120" y="148" width="9" height="14" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                </g>
+
+                <!-- Dolna szczęka (żuchwa) - animowana w pętli -->
+                <g id="skull-jaw">
+                    <!-- Kość żuchwy -->
+                    <path d="M 58 156 L 66 196 C 72 208, 128 208, 134 196 L 142 156 L 130 162 L 125 182 L 75 182 L 70 162 Z" 
+                          fill="#121212" stroke="#ff003c" stroke-width="3.5" stroke-linejoin="round"/>
+                    
+                    <!-- Dolne zęby -->
+                    <rect x="74" y="168" width="8" height="13" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="85" y="168" width="8" height="14" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="96" y="168" width="8" height="14" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="107" y="168" width="8" height="14" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                    <rect x="118" y="168" width="8" height="13" rx="2" fill="#e0e0e0" stroke="#ff003c" stroke-width="1"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Glitchujący napis główny -->
+        <h1 class="glitch-title" data-text="YOU HAVE BEEN HACKED">YOU HAVE BEEN HACKED</h1>
+
+        <!-- Komunikat systemowy -->
+        <div class="status-box">
+            <span>&gt; ROOT ACCESS GRANTED // ALL FILES ENCRYPTED</span><span class="blink-cursor"></span>
+        </div>
+
+        <!-- Link do kierunku Informatyka -->
+        <a id="study-link" class="terminal-link"
+        href="https://www.kmi.ujd.edu.pl/"
+        target="_blank"
+        rel="noopener noreferrer">
+            &gt; DECRYPT FILES // STUDIUJ INFORMATYKĘ
+        </a>
+
+        <!-- Przycisk włączający demoniczny syntezator śmiechu (Web Audio API) -->
+        <button id="toggle-sound" class="sound-btn">[ ENABLE LAUGH AUDIO ]</button>
+    </main>
+
+    <script>
+        // 1. Efekt deszczu kodu Matrix w tle (Canvas)
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*<>?/';
+        const fontSize = 16;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        window.addEventListener('resize', () => {
+            columns = Math.floor(canvas.width / fontSize);
+            drops = Array(columns).fill(1);
+        });
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.08)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 45);
+
+        // 2. Opcjonalny syntezator śmiechu 8-bit / retro bez zewnętrznych plików audio
+        let audioCtx = null;
+        let laughInterval = null;
+        let isPlaying = false;
+        const soundBtn = document.getElementById('toggle-sound');
+
+        function playLaughPulse() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sawtooth';
+            const now = audioCtx.currentTime;
+            
+            // Opadająca częstotliwość imitująca szydercze "HA-HA-HA"
+            osc.frequency.setValueAtTime(190 + Math.random() * 30, now);
+            osc.frequency.exponentialRampToValueAtTime(85, now + 0.14);
+
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.15);
+        }
+
+        soundBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                isPlaying = true;
+                soundBtn.textContent = '[ MUTE LAUGH AUDIO ]';
+                laughInterval = setInterval(playLaughPulse, 320);
+            } else {
+                isPlaying = false;
+                clearInterval(laughInterval);
+                soundBtn.textContent = '[ ENABLE LAUGH AUDIO ]';
+            }
+        });
+
+        // 3. Link do kierunku pojawia się po 5 sekundach
+        const studyLink = document.getElementById('study-link');
+        const LINK_DELAY_MS = 2000; // zmień czas według potrzeb
+
+        setTimeout(() => {
+            studyLink.classList.add('visible');
+        }, LINK_DELAY_MS);
+    </script>
+</body>
+</html>
